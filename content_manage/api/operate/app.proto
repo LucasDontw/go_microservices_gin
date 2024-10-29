@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package api.operate;
+
+option go_package = "content_manage/api/operate;operate";
+option java_multiple_files = true;
+option java_package = "api.operate";
+
+service App {
+	// 創建內容
+	rpc CreateApp (CreateContentReq) returns (CreateContentRep);
+}
+
+message Content {
+	// 內容ID
+	int64 id = 1;
+	// 內容標題
+	string title = 2;
+	// 影片URL
+    string video_url = 3;
+	// 作者
+    string author = 4;
+	// 內容描述
+    string description = 5;
+	// 封面URL
+    string thumbnail = 6;
+	// 內容分類
+    string category = 7;
+	// 內容時長
+    string duration = 8;
+	// 分辨率
+    string resolution = 9;
+	// 文件大小
+    int64 file_size = 10;
+	// 文件格式，如:MP4、AVI
+    string format = 11;
+	// 影片質量，1-1080P 2-640P
+    int32 quality = 12;
+	// 審核狀態，1-審核中 2-審核通過 3-審核失敗
+    int32 approval_status = 13;
+}
+
+message CreateContentReq {
+	// 內容
+	Content content = 1;
+}
+message CreateContentRep {}
