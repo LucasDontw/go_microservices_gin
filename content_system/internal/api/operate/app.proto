@@ -1,8 +1,8 @@
-syntax = "proto3"; // 指的是 proto 語法的版本
+syntax = "proto3";
 
-package api.operate; // 防止名稱衝突一個類似 namespace 的概念
+package api.operate;
 
-option go_package = "content_manage/api/operate;operate";
+option go_package = "./";
 option java_multiple_files = true;
 option java_package = "api.operate";
 

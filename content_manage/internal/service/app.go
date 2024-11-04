@@ -6,7 +6,7 @@ import (
 )
 
 type AppService struct {
-	operate.UnimplementedAppServer // 這是proto產出go檔後會自動生成的接口
+	operate.UnimplementedAppServer // 這是proto產出go檔後會自動生成的接口，用來匹配proto跟service的函式，所以兩邊函式名稱要一樣
 
 	uc *biz.ContentUsecase
 }
