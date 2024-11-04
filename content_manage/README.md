@@ -3,6 +3,7 @@
 ##kratos:##
 go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
 
+
 ##protoc:##
 至GIHBUT下載protoc-28.3-win64.zip，放到想要的地方，然後添加環境變數，{{自訂路徑}}\protoc-28.3-win64\bin
 https://github.com/protocolbuffers/protobuf/releases/
@@ -17,6 +18,7 @@ https://gnuwin32.sourceforge.net/downlinks/make.php
 2. make all
 3. make build
 4. kratos run
+
 
 ##proto檔產出Go檔##
 make api
@@ -36,8 +38,16 @@ make api
 6. Service 層：將 Biz 層的結果傳回給 API 層。
 
 7. API 層：將結果格式化為 HTTP 回應，回傳給客戶端。
-
+完整流程圖請參考./all_lay_flow.drawio
 
 ##wire說明##
 只要各部分的wire.NewSet()有將特定變數註冊進去，wire就會將所有相對應到的類別，
 直接注入到相對應的函數變數中，即可直接使用
+
+
+##補充##
+Biz跟Data層有兩個相近的type struct，兩個雖然可能一模一樣，但不可以合成一個使用，因為使用意義不同，
+分開兩個也是避免過度耦合，也能促進層級間的單一職責原則
+
+biz => 通常是用來定義`業務邏輯`需要的數據結構，它關注的是`業務邏輯`本身，而不是資料存取細節
+data => 結構體是針對`資料庫`或其他`持久化層`設計的，可能包含一些儲存相關的字段（如 ID、資料庫索引或時間戳等），以及適合資料庫存取的結構

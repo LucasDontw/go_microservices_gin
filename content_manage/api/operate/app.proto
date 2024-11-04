@@ -8,7 +8,9 @@ option java_package = "api.operate";
 
 service App {
 	// 創建內容
-	rpc CreateApp (CreateContentReq) returns (CreateContentRep);
+	rpc CreateContent (CreateContentReq) returns (CreateContentRep);
+	// 內容更新
+	rpc UpdateContent (UpdateContentReq) returns (UpdateContentRep);
 }
 
 message Content {
@@ -44,4 +46,11 @@ message CreateContentReq {
 	// 內容
 	Content content = 1;
 }
+
+message UpdateContentReq {
+	// 內容
+	Content content = 1;
+}
+
 message CreateContentRep {}
+message UpdateContentRep {}

@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	App_CreateApp_FullMethodName = "/api.operate.App/CreateApp"
+	App_CreateContent_FullMethodName = "/api.operate.App/CreateContent"
+	App_UpdateContent_FullMethodName = "/api.operate.App/UpdateContent"
 )
 
 // AppClient is the client API for App service.
@@ -27,7 +28,9 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AppClient interface {
 	// 創建內容
-	CreateApp(ctx context.Context, in *CreateContentReq, opts ...grpc.CallOption) (*CreateContentRep, error)
+	CreateContent(ctx context.Context, in *CreateContentReq, opts ...grpc.CallOption) (*CreateContentRep, error)
+	// 內容更新
+	UpdateContent(ctx context.Context, in *UpdateContentReq, opts ...grpc.CallOption) (*UpdateContentRep, error)
 }
 
 type appClient struct {
@@ -38,10 +41,22 @@ func NewAppClient(cc grpc.ClientConnInterface) AppClient {
 	return &appClient{cc}
 }
 
-func (c *appClient) CreateApp(ctx context.Context, in *CreateContentReq, opts ...grpc.CallOption) (*CreateContentRep, error) {
+func (c *appClient) CreateContent(ctx context.Context, in *CreateContentReq, opts ...grpc.CallOption) (*CreateContentRep, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateContentRep)
-	err := c.cc.Invoke(ctx, App_CreateApp_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, App_CreateContent_FullMethodName, in, out, cOpts...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
+
+func (c *appClient) UpdateContent(ctx context.Context, in *UpdateContentReq, opts ...grpc.CallOption) (*UpdateContentRep, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateContentRep)
+	err := c.cc.Invoke(ctx, App_UpdateContent_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +68,9 @@ func (c *appClient) CreateApp(ctx context.Context, in *CreateContentReq, opts ..
 // for forward compatibility.
 type AppServer interface {
 	// 創建內容
-	CreateApp(context.Context, *CreateContentReq) (*CreateContentRep, error)
+	CreateContent(context.Context, *CreateContentReq) (*CreateContentRep, error)
+	// 內容更新
+	UpdateContent(context.Context, *UpdateContentReq) (*UpdateContentRep, error)
 	mustEmbedUnimplementedAppServer()
 }
 
@@ -64,8 +81,11 @@ type AppServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAppServer struct{}
 
-func (UnimplementedAppServer) CreateApp(context.Context, *CreateContentReq) (*CreateContentRep, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateApp not implemented")
+func (UnimplementedAppServer) CreateContent(context.Context, *CreateContentReq) (*CreateContentRep, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateContent not implemented")
+}
+func (UnimplementedAppServer) UpdateContent(context.Context, *UpdateContentReq) (*UpdateContentRep, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateContent not implemented")
 }
 func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
 func (UnimplementedAppServer) testEmbeddedByValue()             {}
@@ -88,20 +108,38 @@ func RegisterAppServer(s grpc.ServiceRegistrar, srv AppServer) {
 	s.RegisterService(&App_ServiceDesc, srv)
 }
 
-func _App_CreateApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _App_CreateContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateContentReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AppServer).CreateApp(ctx, in)
+		return srv.(AppServer).CreateContent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: App_CreateApp_FullMethodName,
+		FullMethod: App_CreateContent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppServer).CreateApp(ctx, req.(*CreateContentReq))
+		return srv.(AppServer).CreateContent(ctx, req.(*CreateContentReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_UpdateContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateContentReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).UpdateContent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_UpdateContent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).UpdateContent(ctx, req.(*UpdateContentReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -114,8 +152,12 @@ var App_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AppServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateApp",
-			Handler:    _App_CreateApp_Handler,
+			MethodName: "CreateContent",
+			Handler:    _App_CreateContent_Handler,
+		},
+		{
+			MethodName: "UpdateContent",
+			Handler:    _App_UpdateContent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

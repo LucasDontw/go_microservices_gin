@@ -4,13 +4,13 @@ import (
 	"content_manage/api/operate"
 	"content_manage/internal/biz"
 	"context"
-	"time"
 )
 
-func (a *AppService) CreateContent(ctx context.Context, req *operate.CreateContentReq) (*operate.CreateContentRep, error) {
+func (a *AppService) UpdateContent(ctx context.Context, req *operate.UpdateContentReq) (*operate.UpdateContentRep, error) {
 	content  := req.GetContent();
 	uc := a.uc
-	err := uc.CreateContent(ctx, &biz.Content{
+	err := uc.UpdateContent(ctx, &biz.Content{
+		Id:              content .GetId(),
 		Title:           content .GetTitle(),
 		VideoURL:        content .GetVideoUrl(),
 		Author:          content .GetAuthor(),
@@ -29,15 +29,5 @@ func (a *AppService) CreateContent(ctx context.Context, req *operate.CreateConte
 		return nil, err
 	}
 
-	return &operate.CreateContentRep{}, nil
-}
-
-func parseDurationOrZero(durationStr string) time.Duration {
-    duration, err := time.ParseDuration(durationStr)
-
-    if err != nil {
-        return 0 // 或回傳一個預設值
-    }
-
-    return duration
+	return &operate.UpdateContentRep{}, nil
 }
