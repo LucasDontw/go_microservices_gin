@@ -4,6 +4,7 @@ import (
 	"content_manage/internal/biz"
 	"context"
 	"time"
+	"gorm.io/gorm"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -93,6 +94,36 @@ func (c *contentRepo) Update(ctx context.Context, id int64, content *biz.Content
 	if err := db.Where("id = ?", id).Updates(&detail).Error; err != nil {
 		c.log.WithContext(ctx).Errorf("content update error = %v", err)
 
+		return err
+	}
+
+	return nil
+}
+
+func (c *contentRepo) IsExist(ctx context.Context, id int64) (bool, error) {
+	db := c.data.db
+	var detail ContentDetail
+	err := db.Where("id = ?", id).First(&detail).Error
+
+	if err == gorm.ErrRecordNotFound {
+		return false, nil
+	}
+
+	if err != nil {
+		c.log.WithContext(ctx).Errorf("ContentDao isExist = [%v]", err)
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (c *contentRepo) Delete(ctx context.Context, id int64) error {
+	db := c.data.db
+
+	err := db.Where("id = ?", id).Delete(&ContentDetail{}).Error;
+
+	if err != nil {
+		c.log.WithContext(ctx).Errorf("content delete error = %v", err)
 		return err
 	}
 

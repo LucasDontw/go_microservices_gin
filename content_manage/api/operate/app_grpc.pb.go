@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	App_CreateContent_FullMethodName = "/api.operate.App/CreateContent"
 	App_UpdateContent_FullMethodName = "/api.operate.App/UpdateContent"
+	App_DeleteContent_FullMethodName = "/api.operate.App/DeleteContent"
 )
 
 // AppClient is the client API for App service.
@@ -31,6 +32,8 @@ type AppClient interface {
 	CreateContent(ctx context.Context, in *CreateContentReq, opts ...grpc.CallOption) (*CreateContentRep, error)
 	// 內容更新
 	UpdateContent(ctx context.Context, in *UpdateContentReq, opts ...grpc.CallOption) (*UpdateContentRep, error)
+	// 删除内容
+	DeleteContent(ctx context.Context, in *DeleteContentReq, opts ...grpc.CallOption) (*DeleteContentRsp, error)
 }
 
 type appClient struct {
@@ -45,11 +48,9 @@ func (c *appClient) CreateContent(ctx context.Context, in *CreateContentReq, opt
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateContentRep)
 	err := c.cc.Invoke(ctx, App_CreateContent_FullMethodName, in, out, cOpts...)
-
 	if err != nil {
 		return nil, err
 	}
-
 	return out, nil
 }
 
@@ -57,6 +58,16 @@ func (c *appClient) UpdateContent(ctx context.Context, in *UpdateContentReq, opt
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateContentRep)
 	err := c.cc.Invoke(ctx, App_UpdateContent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) DeleteContent(ctx context.Context, in *DeleteContentReq, opts ...grpc.CallOption) (*DeleteContentRsp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteContentRsp)
+	err := c.cc.Invoke(ctx, App_DeleteContent_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +82,8 @@ type AppServer interface {
 	CreateContent(context.Context, *CreateContentReq) (*CreateContentRep, error)
 	// 內容更新
 	UpdateContent(context.Context, *UpdateContentReq) (*UpdateContentRep, error)
+	// 删除内容
+	DeleteContent(context.Context, *DeleteContentReq) (*DeleteContentRsp, error)
 	mustEmbedUnimplementedAppServer()
 }
 
@@ -86,6 +99,9 @@ func (UnimplementedAppServer) CreateContent(context.Context, *CreateContentReq) 
 }
 func (UnimplementedAppServer) UpdateContent(context.Context, *UpdateContentReq) (*UpdateContentRep, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateContent not implemented")
+}
+func (UnimplementedAppServer) DeleteContent(context.Context, *DeleteContentReq) (*DeleteContentRsp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteContent not implemented")
 }
 func (UnimplementedAppServer) mustEmbedUnimplementedAppServer() {}
 func (UnimplementedAppServer) testEmbeddedByValue()             {}
@@ -144,6 +160,24 @@ func _App_UpdateContent_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _App_DeleteContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteContentReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).DeleteContent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: App_DeleteContent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).DeleteContent(ctx, req.(*DeleteContentReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // App_ServiceDesc is the grpc.ServiceDesc for App service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -158,6 +192,10 @@ var App_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateContent",
 			Handler:    _App_UpdateContent_Handler,
+		},
+		{
+			MethodName: "DeleteContent",
+			Handler:    _App_DeleteContent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -28,7 +29,9 @@ type Content struct {
 
 type ContentRepo interface {
 	Create(ctx context.Context, c *Content) (error)
-	Update(ctx context.Context, id int64, c *Content) (error)
+	Update(ctx context.Context, id int64, c *Content) error
+	IsExist(ctx context.Context, contentID int64) (bool, error)
+	Delete(ctx context.Context, id int64) error
 }
 
 type ContentUsecase struct {
@@ -54,4 +57,20 @@ func (uc *ContentUsecase) UpdateContent(ctx context.Context, c *Content) error {
 	uc.log.WithContext(ctx).Infof("UpdateContent: %v", c)
 
 	return uc.repo.Update(ctx, c.Id, c)
+}
+
+// DeleteContent delete a Content.
+func (uc *ContentUsecase) DeleteContent(ctx context.Context, id int64) error {
+	repo := uc.repo
+	ok, err := repo.IsExist(ctx, id)
+
+	if err != nil {
+		return err
+	}
+
+	if !ok {
+		return errors.New("内容不存在")
+	}
+
+	return repo.Delete(ctx, id)
 }
