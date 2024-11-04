@@ -36,8 +36,8 @@ type ContentDetail struct {
 	Format         string        `gorm:"column:format"`          // 文件格式 ex:mp4
 	Quality        int32         `gorm:"column:quality"`         // 影片品質 1-高清 2-標清
 	ApprovalStatus int32         `gorm:"column:approval_status"` // 審核狀態 1-審核中 2-審核通過 3-審核不通過
-	Created_at     time.Time     `gorm:"column:created_at"`
-	Updated_at     time.Time     `gorm:"column:updated_at"`
+	CreatedAt     time.Time     `gorm:"column:created_at"`
+	UpdatedAt     time.Time     `gorm:"column:updated_at"`
 }
 
 func (c ContentDetail) TableName() string { //指定此結構對應到哪個table
@@ -128,4 +128,70 @@ func (c *contentRepo) Delete(ctx context.Context, id int64) error {
 	}
 
 	return nil
+}
+
+func (c *contentRepo) Find(ctx context.Context, params *biz.FindParams) ([]*biz.Content, int64, error) {
+	query := c.data.db.Model(&ContentDetail{})
+
+	if params.ID != 0 {
+		query = query.Where("id = ?", params.ID)
+	}
+
+	if params.Author != "" {
+		query = query.Where("author = ?", params.Author)
+	}
+
+	if params.Title != "" {
+		query = query.Where("title = ?", params.Title)
+	}
+
+	var total int64
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	var page, pageSize = 1, 10
+
+	if params.Page > 0 {
+		page = int(params.Page)
+	}
+
+	if params.PageSize > 0 {
+		pageSize = int(params.PageSize)
+	}
+
+	offset := (page - 1) * pageSize
+
+	var results []*ContentDetail
+
+	if err := query.Offset(offset).Limit(pageSize).Find(&results).Error; err != nil {
+		c.log.WithContext(ctx).Errorf("content find error = %v", err)
+
+		return nil, 0, err
+	}
+
+	var contents []*biz.Content
+
+	for _, r := range results {
+		contents = append(contents, &biz.Content{
+			Id:             r.Id,
+			Title:          r.Title,
+			VideoURL:       r.VideoURL,
+			Author:         r.Author,
+			Description:    r.Description,
+			Thumbnail:      r.Thumbnail,
+			Category:       r.Category,
+			Duration:       r.Duration,
+			Resolution:     r.Resolution,
+			FileSize:       r.FileSize,
+			Format:         r.Format,
+			Quality:        r.Quality,
+			ApprovalStatus: r.ApprovalStatus,
+			UpdatedAt:      r.UpdatedAt,
+			CreatedAt:      r.CreatedAt,
+		})
+	}
+
+	return contents, total, nil
 }

@@ -5,6 +5,7 @@ import (
 	"content_manage/internal/biz"
 	"context"
 	"time"
+	"strconv"
 )
 
 func (a *AppService) CreateContent(ctx context.Context, req *operate.CreateContentReq) (*operate.CreateContentRep, error) {
@@ -69,6 +70,49 @@ func (a *AppService) DeleteContent(ctx context.Context,	req *operate.DeleteConte
 	return &operate.DeleteContentRsp{}, nil
 }
 
+func (a *AppService) FindContent(ctx context.Context, req *operate.FindContentReq) (*operate.FindContentRsp, error) {
+	uc := a.uc
+
+	findParams := &biz.FindParams{
+		ID:       req.GetId(),
+		Author:   req.GetAuthor(),
+		Title:    req.GetTitle(),
+		Page:     req.Page,
+		PageSize: req.GetPageSize(),
+	}
+	results, total, err := uc.FindContent(ctx, findParams)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var contents []*operate.Content
+
+	for _, r := range results {
+		contents = append(contents, &operate.Content{
+			Id:             r.Id,
+			Title:          r.Title,
+			VideoUrl:       r.VideoURL,
+			Author:         r.Author,
+			Description:    r.Description,
+			Thumbnail:      r.Thumbnail,
+			Category:       r.Category,
+			Duration:       strconv.FormatInt(r.Duration.Milliseconds(), 10),
+			Resolution:     r.Resolution,
+			FileSize:       r.FileSize,
+			Format:         r.Format,
+			Quality:        r.Quality,
+			ApprovalStatus: r.ApprovalStatus,
+		})
+	}
+
+	rsp := &operate.FindContentRsp{
+		Total:    total,
+		Contents: contents,
+	}
+
+	return rsp, nil
+}
 
 func parseDurationOrZero(durationStr string) time.Duration {
     duration, err := time.ParseDuration(durationStr)

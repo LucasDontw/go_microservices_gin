@@ -11,8 +11,10 @@ service App {
 	rpc CreateContent (CreateContentReq) returns (CreateContentRep);
 	// 內容更新
 	rpc UpdateContent (UpdateContentReq) returns (UpdateContentRep);
-	// 删除内容
+	// 刪除內容
 	rpc DeleteContent (DeleteContentReq) returns (DeleteContentRsp);
+	// 內容尋找
+	rpc FindContent (FindContentReq) returns (FindContentRsp);
 }
 
 message Content {
@@ -58,6 +60,25 @@ message DeleteContentReq {
 	int64 id = 1;
 }
 
+message FindContentReq {
+	// 內容ID
+	int64 id = 1;
+	// 作者
+	string author = 2;
+	// 標題
+	string title = 3;
+	// 頁
+	int32 page = 4;
+	// 每頁數量
+	int32 page_size = 5;
+}
+
 message CreateContentRep {}
 message UpdateContentRep {}
 message DeleteContentRsp {}
+message FindContentRsp {
+	// 內容總數
+	int64 total = 1;
+	// 內容
+	repeated Content contents = 2;
+}

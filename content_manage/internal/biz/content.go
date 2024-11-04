@@ -27,11 +27,20 @@ type Content struct {
 	UpdatedAt      time.Time     `json:"updated_at"`
 }
 
+type FindParams struct {
+	ID       int64
+	Author   string
+	Title    string
+	Page     int32
+	PageSize int32
+}
+
 type ContentRepo interface {
 	Create(ctx context.Context, c *Content) (error)
 	Update(ctx context.Context, id int64, c *Content) error
 	IsExist(ctx context.Context, contentID int64) (bool, error)
 	Delete(ctx context.Context, id int64) error
+	Find(ctx context.Context, params *FindParams) ([]*Content, int64, error)
 }
 
 type ContentUsecase struct {
@@ -73,4 +82,16 @@ func (uc *ContentUsecase) DeleteContent(ctx context.Context, id int64) error {
 	}
 
 	return repo.Delete(ctx, id)
+}
+
+func (uc *ContentUsecase) FindContent(ctx context.Context, params *FindParams) ([]*Content, int64, error) {
+	repo := uc.repo
+
+	contents, total, err := repo.Find(ctx, params)
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return contents, total, err
 }
