@@ -7,6 +7,9 @@ import (
 	"os"
 	"strconv"
 
+	"cms/v2/internal/api/operate"
+	"github.com/go-kratos/kratos/v2/middleware/recovery"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/mysql"
@@ -16,6 +19,7 @@ import (
 type CmsApp struct {
 	db  *gorm.DB
 	rdb *redis.Client
+	operateAppClient operate.AppClient
 }
 
 func NewCmsApp() *CmsApp {
@@ -29,6 +33,7 @@ func NewCmsApp() *CmsApp {
 
 	connDB(app)
 	connRdb(app)
+	connOperateAppClient(app)
 
 	return app
 }
@@ -78,4 +83,21 @@ func connRdb(app *CmsApp) {
 	}
 
 	app.rdb = rdb
+}
+
+func connOperateAppClient(app *CmsApp) {
+	conn, err := grpc.DialInsecure(
+		context.Background(),
+		grpc.WithEndpoint("127.0.0.1:9000"),
+		grpc.WithMiddleware(
+			recovery.Recovery(),
+		),
+	)
+
+	if err != nil {
+		panic(err)
+	}
+
+	appClient := operate.NewAppClient(conn)
+	app.operateAppClient = appClient
 }

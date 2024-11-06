@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.28.3
-// source: internal/api/operate/app.proto
+// source: operate/app.proto
 
-package __
+package operate
 
 import (
 	context "context"
@@ -239,5 +239,5 @@ var App_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "internal/api/operate/app.proto",
+	Metadata: "operate/app.proto",
 }
