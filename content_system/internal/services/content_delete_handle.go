@@ -8,7 +8,7 @@ import (
 )
 
 type ContentDeleteReq struct {
-	ID int `json:"id" binding:"required"`
+	Id int `json:"id" binding:"required"`
 }
 
 type ContentDeleteRep struct {
@@ -24,7 +24,7 @@ func (c *CmsApp) ContentDelete(ctx *gin.Context) {
 	}
 
 	contentRepo := repositories.NewContentRepo(c.db)
-	ok, err := contentRepo.IsExist(req.ID)
+	ok, err := contentRepo.IsExist(req.Id)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -36,7 +36,7 @@ func (c *CmsApp) ContentDelete(ctx *gin.Context) {
 		return
 	}
 
-	if err := contentRepo.Delete(req.ID); err != nil {
+	if err := contentRepo.Delete(req.Id); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "刪除失敗"})
 
 		return

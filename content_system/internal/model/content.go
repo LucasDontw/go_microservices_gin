@@ -9,7 +9,7 @@ type ContentDetail struct {
 	Author         string        `gorm:"column:author"`          // 作者
 	VideoURL       string        `gorm:"column:video_url"`       // 視頻撥放URL
 	Thumbnail      string        `gorm:"column:thumbnail"`       // 封面圖URL
-	Catgory        string        `gorm:"column:catgory"`         // 內容分類
+	Category       string        `gorm:"column:catgory"`         // 內容分類
 	Duration       time.Duration `gorm:"column:duration"`        // 內容時長
 	Resolution     string        `gorm:"column:resolution"`      // 分辨率 ex:720p
 	FileSize       int64         `gorm:"column:file_size"`       // 文件大小

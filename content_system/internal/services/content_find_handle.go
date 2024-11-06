@@ -1,16 +1,16 @@
 package services
 
 import (
-	"cms/v2/internal/api/operate"
 	"cms/v2/internal/model"
 	// "cms/v2/internal/repositories"
+	"cms/v2/internal/api/operate"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ContentFindReq struct {
-	ID       int    `json:"id"`
+	Id       int    `json:"id"`
 	Author   string `json:"author"`
 	Title    string `json:"title"`
 	Page     int    `json:"page"`
@@ -32,8 +32,8 @@ func (c *CmsApp) ContentFind(ctx *gin.Context) {
 	}
 
 	//////////// 使用grpc版本 開始//////////////////
-	grpcContentList, grpcErr := c.operateAppClient.FindContent(ctx, &operate.FindContentReq{
-		Id:       int64(req.ID),
+	rseponse, grpcErr := c.operateAppClient.FindContent(ctx, &operate.FindContentReq{
+		Id:       int64(req.Id),
         Author:   req.Author,
         Title:    req.Title,
         Page:     int32(req.Page),
@@ -44,10 +44,11 @@ func (c *CmsApp) ContentFind(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": grpcErr.Error()})
 		return
 	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":    0,
 		"message": "ok",
-		"data": grpcContentList,
+		"data": rseponse,
 	})
 	//////////// 使用grpc版本 結束//////////////////
 
@@ -55,7 +56,7 @@ func (c *CmsApp) ContentFind(ctx *gin.Context) {
 	//////////// 直接訪問DB版本 開始//////////////////
 	// contentRepo := repositories.NewContentRepo(c.db)
 	// contentList, count, err := contentRepo.Get(&repositories.FindParams{
-	// 	ID:       req.ID,
+	// 	Id:       req.Id,
 	// 	Author:   req.Author,
 	// 	Title:    req.Title,
 	// 	Page:     req.Page,
@@ -76,7 +77,7 @@ func (c *CmsApp) ContentFind(ctx *gin.Context) {
 	// 		Author:         content.Author,
 	// 		VideoURL:       content.VideoURL,
 	// 		Thumbnail:      content.Thumbnail,
-	// 		Catgory:        content.Catgory,
+	// 		Category:        content.Category,
 	// 		Duration:       content.Duration,
 	// 		Resolution:     content.Resolution,
 	// 		FileSize:       content.FileSize,

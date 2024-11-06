@@ -15,7 +15,7 @@ type ContentCreateReq struct {
 	Author         string        `json:"author" binding:"required"`
 	Description    string        `json:"description"`
 	Thumbnail      string        `json:"thumbnail"`
-	Catgory        string        `json:"catgory"`
+	Category       string        `json:"catgory"`
 	Duration       time.Duration `json:"duration"`
 	Resolution     string        `json:"resolution"`
 	FileSize       int64         `json:"file_size"`
@@ -47,7 +47,7 @@ func (c *CmsApp) ContentCreate(ctx *gin.Context) {
 		Author:         req.Author,
 		VideoURL:       req.VideoURL,
 		Thumbnail:      req.Thumbnail,
-		Catgory:        req.Catgory,
+		Category:        req.Category,
 		Duration:       req.Duration,
 		Resolution:     req.Resolution,
 		FileSize:       req.FileSize,

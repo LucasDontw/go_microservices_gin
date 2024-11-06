@@ -11,7 +11,7 @@ type ContentRepo struct {
 }
 
 type FindParams struct {
-	ID       int
+	Id       int
 	Author   string
 	Title    string
 	Page     int
@@ -25,8 +25,8 @@ func NewContentRepo(db *gorm.DB) *ContentRepo {
 func (c *ContentRepo) Get(params *FindParams) ([]*model.ContentDetail, int64, error) {
 	query := c.db.Model(&model.ContentDetail{})
 
-	if params.ID != 0 {
-		query = query.Where("id = ?", params.ID)
+	if params.Id != 0 {
+		query = query.Where("id = ?", params.Id)
 	}
 
 	if params.Author != "" {
