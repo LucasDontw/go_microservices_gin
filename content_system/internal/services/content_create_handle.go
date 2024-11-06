@@ -1,8 +1,9 @@
 package services
 
 import (
-	"cms/v2/internal/model"
-	"cms/v2/internal/repositories"
+	"cms/v2/internal/api/operate"
+	// "cms/v2/internal/model"
+	// "cms/v2/internal/repositories"
 	"net/http"
 	"time"
 
@@ -38,35 +39,68 @@ func (c *CmsApp) ContentCreate(ctx *gin.Context) {
 		return
 	}
 
-	contentRepo := repositories.NewContentRepo(c.db)
+	//////////// 使用grpc版本 開始//////////////////
+	rseponse, grpcErr := c.operateAppClient.CreateContent(ctx, &operate.CreateContentReq{
+		Content: &operate.Content{
+            Title:          req.Title,
+            VideoUrl:       req.VideoURL,
+            Author:         req.Author,
+            Description:    req.Description,
+            Thumbnail:      req.Thumbnail,
+            Category:       req.Category,
+            Duration:       req.Duration.String(),
+            Resolution:     req.Resolution,
+            FileSize:       req.FileSize,
+            Format:         req.Format,
+            Quality:        int32(req.Quality),
+            ApprovalStatus: int32(req.ApprovalStatus),
+		},
+	})
 
-	now := time.Now()
-	if err := contentRepo.Create(model.ContentDetail{
-		Title:          req.Title,
-		Description:    req.Description,
-		Author:         req.Author,
-		VideoURL:       req.VideoURL,
-		Thumbnail:      req.Thumbnail,
-		Category:        req.Category,
-		Duration:       req.Duration,
-		Resolution:     req.Resolution,
-		FileSize:       req.FileSize,
-		Format:         req.Format,
-		Quality:        req.Quality,
-		ApprovalStatus: req.ApprovalStatus,
-		Created_at:     now,
-		Updated_at:     now,
-	}); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "創建失敗"})
-
+	if grpcErr != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": grpcErr.Error()})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":    0,
 		"message": "ok",
-		"data": &ContentCreateRep{
-			Message: "創建成功",
-		},
+		"data": rseponse,
 	})
+	//////////// 使用grpc版本 結束//////////////////
+
+
+	//////////// 直接訪問DB版本 開始//////////////////
+	// contentRepo := repositories.NewContentRepo(c.db)
+
+	// now := time.Now()
+	// if err := contentRepo.Create(model.ContentDetail{
+	// 	Title:          req.Title,
+	// 	Description:    req.Description,
+	// 	Author:         req.Author,
+	// 	VideoURL:       req.VideoURL,
+	// 	Thumbnail:      req.Thumbnail,
+	// 	Category:        req.Category,
+	// 	Duration:       req.Duration,
+	// 	Resolution:     req.Resolution,
+	// 	FileSize:       req.FileSize,
+	// 	Format:         req.Format,
+	// 	Quality:        req.Quality,
+	// 	ApprovalStatus: req.ApprovalStatus,
+	// 	Created_at:     now,
+	// 	Updated_at:     now,
+	// }); err != nil {
+	// 	ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "創建失敗"})
+
+	// 	return
+	// }
+
+	// ctx.JSON(http.StatusOK, gin.H{
+	// 	"code":    0,
+	// 	"message": "ok",
+	// 	"data": &ContentCreateRep{
+	// 		Message: "創建成功",
+	// 	},
+	// })
+	//////////// 直接訪問DB版本 結束//////////////////
 }

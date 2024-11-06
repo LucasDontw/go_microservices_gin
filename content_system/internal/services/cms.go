@@ -88,7 +88,7 @@ func connRdb(app *CmsApp) {
 func connOperateAppClient(app *CmsApp) {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
-		grpc.WithEndpoint("127.0.0.1:9000"),
+		grpc.WithEndpoint(os.Getenv("MICRO_SERVICE_URL")),
 		grpc.WithMiddleware(
 			recovery.Recovery(),
 		),
