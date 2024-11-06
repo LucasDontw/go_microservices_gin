@@ -6,6 +6,7 @@ toolchain go1.22.6
 
 require (
 	github.com/go-kratos/kratos/v2 v2.8.0
+	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
 	go.uber.org/automaxprocs v1.5.1
 	google.golang.org/grpc v1.65.0
@@ -22,7 +23,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/form/v4 v4.2.1 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
